@@ -471,14 +471,14 @@ export const moviesData: Movie[] = [
     poster: "https://m.media-amazon.com/images/M/MV5BOWNiMjlmZjItNTFmYS00ZWVjLTlmODgtZjE1MTVmNmJhODI3XkEyXkFqcGc@._V1_FMjpg_UX1000_.jpg",
     synopsis: "Tres ladronas expertas deben unirse para un último atraco.",
     trailerUrl: "https://www.youtube.com/watch?v=lYednWpcM8w"
-    },
-{
-  title: "Death Note",
-  michelRating: 9,
-  brayhantRating: 8.5,
-  poster: "https://occ-0-8407-90.1.nflxso.net/dnm/api/v6/Z-WHgqd_TeJxSuha8aZ5WpyLcX8/AAAABc1AsMNeGCLw-9aVCp4jFPpv4yNWqZuJavgkpY6QDI2geQjA4FqaMhytfAV4OZoxZ773cIVjjOX36mCLYs7qCZROQ1lG_sYOQJY0.jpg?r=e9d"
-  synopsis: "Light Yagami es un estudiante brillante con mucho futuro que se aburre a más no poder. Pero todo cambia cuando encuentra la Death Note, un cuaderno que dejó caer un rebelde dios de la muerte.",
-  trailerUrl: "https://www.youtube.com/watch?v=NlJZ-YgAt-c"
+  },
+  {
+    title: "Death Note",
+    michelRating: 9,
+    brayhantRating: 8.5,
+    poster: "https://occ-0-8407-90.1.nflxso.net/dnm/api/v6/Z-WHgqd_TeJxSuha8aZ5WpyLcX8/AAAABc1AsMNeGCLw-9aVCp4jFPpv4yNWqZuJavgkpY6QDI2geQjA4FqaMhytfAV4OZoxZ773cIVjjOX36mCLYs7qCZROQ1lG_sYOQJY0.jpg?r=e9d",
+    synopsis: "Light Yagami es un estudiante brillante con mucho futuro que se aburre a más no poder. Pero todo cambia cuando encuentra la Death Note, un cuaderno que dejó caer un rebelde dios de la muerte.",
+    trailerUrl: "https://www.youtube.com/watch?v=NlJZ-YgAt-c"
   }
 ];
 
