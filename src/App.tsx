@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Search, PlusCircle, X } from 'lucide-react';
 import { Movie } from './types';
-import { moviesWithYoutubeIds } from './data/movies';
 import MovieCard from './components/MovieCard';
 import MovieModal from './components/MovieModal';
+import { getMovies, addMovie } from './lib/supabase';
 
 function App() {
   const [movies, setMovies] = useState<Movie[]>([]);
@@ -21,17 +21,11 @@ function App() {
     trailerUrl: ''
   });
   
-  // Reference for intersection observer
   const moviesRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    // Simulate loading data
-    setTimeout(() => {
-      setMovies(moviesWithYoutubeIds);
-      setLoading(false);
-    }, 1500);
+    loadMovies();
 
-    // Setup intersection observer for scroll animations
     const options = {
       root: null,
       rootMargin: '0px',
@@ -46,7 +40,6 @@ function App() {
       });
     }, options);
 
-    // Observe all movie cards
     if (moviesRef.current) {
       const movieElements = moviesRef.current.querySelectorAll('.movie-card');
       movieElements.forEach(el => observer.observe(el));
@@ -60,7 +53,13 @@ function App() {
     };
   }, []);
 
-  // Filter movies based on search term and filter
+  const loadMovies = async () => {
+    setLoading(true);
+    const fetchedMovies = await getMovies();
+    setMovies(fetchedMovies);
+    setLoading(false);
+  };
+
   const filteredMovies = movies.filter(movie => {
     const matchesSearch = movie.title.toLowerCase().includes(searchTerm.toLowerCase()) || 
                           movie.synopsis.toLowerCase().includes(searchTerm.toLowerCase());
@@ -71,47 +70,41 @@ function App() {
       const avgRating = (movie.michelRating + movie.brayhantRating) / 2;
       return avgRating >= 8;
     } else if (filter === 'recent') {
-      // For demo purposes, we'll just use the last 10 movies
       return movies.indexOf(movie) >= Math.max(0, movies.length - 10);
     }
     
     return true;
   });
 
-  const openMovieDetails = (movie: Movie) => {
-    setSelectedMovie(movie);
-  };
-
-  const closeModal = () => {
-    setSelectedMovie(null);
-  };
-
-  const handleAddMovie = () => {
+  const handleAddMovie = async () => {
     if (!newMovie.title || !newMovie.synopsis || !newMovie.poster) {
       alert('Por favor, completa todos los campos obligatorios');
       return;
     }
 
     const movieToAdd: Movie = {
-      title: newMovie.title,
-      synopsis: newMovie.synopsis,
-      poster: newMovie.poster,
+      title: newMovie.title!,
+      synopsis: newMovie.synopsis!,
+      poster: newMovie.poster!,
       michelRating: newMovie.michelRating || 5,
       brayhantRating: newMovie.brayhantRating || 5,
       trailerUrl: newMovie.trailerUrl,
       youtubeId: newMovie.trailerUrl ? getYoutubeId(newMovie.trailerUrl) : undefined
     };
 
-    setMovies(prevMovies => [...prevMovies, movieToAdd]);
-    setShowAddModal(false);
-    setNewMovie({
-      title: '',
-      synopsis: '',
-      poster: '',
-      michelRating: 5,
-      brayhantRating: 5,
-      trailerUrl: ''
-    });
+    const addedMovie = await addMovie(movieToAdd);
+    if (addedMovie) {
+      setMovies(prevMovies => [...prevMovies, addedMovie]);
+      setShowAddModal(false);
+      setNewMovie({
+        title: '',
+        synopsis: '',
+        poster: '',
+        michelRating: 5,
+        brayhantRating: 5,
+        trailerUrl: ''
+      });
+    }
   };
 
   const getYoutubeId = (url: string): string => {
@@ -130,7 +123,6 @@ function App() {
 
   return (
     <div className="min-h-screen bg-[#121212] text-white">
-      {/* Loading Overlay */}
       {loading && (
         <div className="fixed inset-0 bg-[#121212] flex items-center justify-center z-50 transition-opacity">
           <div className="text-center">
@@ -140,14 +132,11 @@ function App() {
         </div>
       )}
 
-      {/* Border Effect */}
       <div className="fixed inset-0 pointer-events-none border-4 border-[#8a2be2]/30 shadow-[0_0_20px_rgba(138,43,226,0.5)] z-50"></div>
 
-      {/* Header */}
       <header className="text-center py-8 mb-8 border-b border-white/10 sticky top-0 bg-[#121212]/70 backdrop-blur-lg z-40">
         <h1 className="text-4xl md:text-5xl font-bold mb-4 text-shadow-lg">CineFans</h1>
         
-        {/* Search */}
         <div className="max-w-md mx-auto relative px-4">
           <div className="relative">
             <input 
@@ -161,7 +150,6 @@ function App() {
           </div>
         </div>
         
-        {/* Filters */}
         <div className="flex justify-center gap-4 mt-4 flex-wrap px-4">
           <button 
             className={`px-4 py-2 rounded-full transition-all ${filter === 'all' ? 'bg-[#8a2be2] shadow-[0_0_15px_rgba(138,43,226,0.4)]' : 'bg-white/10 border border-white/20 hover:bg-white/15'}`}
@@ -184,7 +172,6 @@ function App() {
         </div>
       </header>
 
-      {/* Movie Grid */}
       <div className="max-w-7xl mx-auto px-4 pb-20" ref={moviesRef}>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
           {filteredMovies.length === 0 && !loading ? (
@@ -196,7 +183,7 @@ function App() {
               <MovieCard 
                 key={index}
                 movie={movie}
-                onClick={() => openMovieDetails(movie)}
+                onClick={() => setSelectedMovie(movie)}
                 index={index}
               />
             ))
@@ -204,7 +191,6 @@ function App() {
         </div>
       </div>
 
-      {/* Add Movie Button */}
       <button 
         onClick={() => setShowAddModal(true)}
         className="fixed bottom-10 right-10 w-14 h-14 bg-[#8a2be2] rounded-full flex items-center justify-center shadow-[0_0_20px_rgba(138,43,226,0.5)] transition-all hover:scale-110 hover:shadow-[0_0_30px_rgba(138,43,226,0.7)] z-30"
@@ -212,7 +198,6 @@ function App() {
         <PlusCircle size={26} />
       </button>
 
-      {/* Add Movie Modal */}
       {showAddModal && (
         <div 
           className="fixed inset-0 bg-black/90 flex items-center justify-center p-4 z-50 overflow-y-auto"
@@ -334,11 +319,10 @@ function App() {
         </div>
       )}
 
-      {/* Movie Details Modal */}
       {selectedMovie && (
         <MovieModal 
           movie={selectedMovie}
-          onClose={closeModal}
+          onClose={() => setSelectedMovie(null)}
         />
       )}
     </div>
