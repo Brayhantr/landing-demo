@@ -94,7 +94,7 @@ function App() {
 
     const addedMovie = await addMovie(movieToAdd);
     if (addedMovie) {
-      setMovies(prevMovies => [...prevMovies, addedMovie]);
+      setMovies(prevMovies => [addedMovie, ...prevMovies]);
       setShowAddModal(false);
       setNewMovie({
         title: '',
