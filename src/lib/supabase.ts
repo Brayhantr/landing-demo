@@ -1,41 +1,40 @@
 import { createClient } from '@supabase/supabase-js';
-import { moviesWithYoutubeIds } from '../data/movies';
 import type { Movie } from '../types';
 
-// For development, we'll use the local data
-// Replace these with your actual Supabase credentials when ready
-const supabaseUrl = 'https://example.supabase.co';
-const supabaseKey = 'your-anon-key';
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
-export const supabase = createClient(supabaseUrl, supabaseKey);
+if (!supabaseUrl || !supabaseAnonKey) {
+  throw new Error('Missing Supabase environment variables');
+}
+
+export const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
 export async function getMovies(): Promise<Movie[]> {
-  // For development, return the local data
-  return moviesWithYoutubeIds;
+  const { data, error } = await supabase
+    .from('movies')
+    .select('*')
+    .order('created_at', { ascending: false });
+
+  if (error) {
+    console.error('Error fetching movies:', error);
+    return [];
+  }
+
+  return data || [];
 }
 
 export async function addMovie(movie: Movie): Promise<Movie | null> {
-  // For development, simulate adding to database
-  const newMovie = {
-    ...movie,
-    youtubeId: movie.trailerUrl ? getYoutubeId(movie.trailerUrl) : undefined
-  };
-  
-  moviesWithYoutubeIds.push(newMovie);
-  return newMovie;
-}
+  const { data, error } = await supabase
+    .from('movies')
+    .insert([movie])
+    .select()
+    .single();
 
-// Helper function to extract YouTube ID from URL
-function getYoutubeId(url: string): string {
-  try {
-    const urlObj = new URL(url);
-    if (urlObj.hostname === 'www.youtube.com' && urlObj.searchParams.has('v')) {
-      return urlObj.searchParams.get('v') || '';
-    } else if (urlObj.hostname === 'youtu.be') {
-      return urlObj.pathname.substring(1);
-    }
-    return '';
-  } catch (error) {
-    return '';
+  if (error) {
+    console.error('Error adding movie:', error);
+    return null;
   }
+
+  return data;
 }
