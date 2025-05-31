@@ -1,8 +1,9 @@
 import { createClient } from '@supabase/supabase-js';
 import type { Movie } from '../types';
 
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+// Using temporary values for development - replace these with your actual Supabase credentials
+const supabaseUrl = 'https://xyzcompany.supabase.co';
+const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhtdGt4eHh4eHh4eHh4eHh4eHgiLCJyb2xlIjoiYW5vbiIsImlhdCI6MTcwMjU4MDAwMCwiZXhwIjoxODYwMzQwMDAwfQ.temporary-key';
 
 export const supabase = createClient(supabaseUrl, supabaseKey);
 
