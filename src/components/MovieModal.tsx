@@ -38,7 +38,7 @@ const MovieModal: React.FC<MovieModalProps> = ({ movie, onClose }) => {
     
     // Half star
     if (hasHalfStar) {
-      stars.push(<Star key="half" className="fill-[#ffd700] text-[#ffd700] opacity-50" size={18} />);
+      stars.push(<Star key="half\" className="fill-[#ffd700] text-[#ffd700] opacity-50\" size={18} />);
     }
     
     // Empty stars
