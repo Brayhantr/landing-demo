@@ -9,10 +9,8 @@ interface MovieCardProps {
 }
 
 const MovieCard: React.FC<MovieCardProps> = ({ movie, onClick, index }) => {
-  // Animation delay based on index for staggered effect
   const animationDelay = `${index * 0.1}s`;
 
-  // Function to convert rating to stars
   const getStars = (rating: number) => {
     const starsTotal = 5;
     const starPercentage = (rating / 10) * starsTotal;
@@ -63,11 +61,11 @@ const MovieCard: React.FC<MovieCardProps> = ({ movie, onClick, index }) => {
         <div className="flex justify-between mb-4">
           <div className="flex flex-col items-center">
             <span className="text-xs text-white/80 mb-1">Michel</span>
-            <div className="star-rating">{getStars(movie.michelRating)}</div>
+            <div className="star-rating">{getStars(movie.michel_rating)}</div>
           </div>
           <div className="flex flex-col items-center">
             <span className="text-xs text-white/80 mb-1">Brayhant</span>
-            <div className="star-rating">{getStars(movie.brayhantRating)}</div>
+            <div className="star-rating">{getStars(movie.brayhant_rating)}</div>
           </div>
         </div>
         

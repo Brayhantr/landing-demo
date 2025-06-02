@@ -1,9 +1,11 @@
 export interface Movie {
+  id?: string;
+  created_at?: string;
   title: string;
   poster: string;
-  michelRating: number;
-  brayhantRating: number;
+  michel_rating: number;
+  brayhant_rating: number;
   synopsis: string;
-  trailerUrl?: string;
-  youtubeId?: string;
+  trailer_url?: string;
+  youtube_id?: string;
 }

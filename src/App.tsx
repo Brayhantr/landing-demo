@@ -16,9 +16,9 @@ function App() {
     title: '',
     synopsis: '',
     poster: '',
-    michelRating: 5,
-    brayhantRating: 5,
-    trailerUrl: ''
+    michel_rating: 5,
+    brayhant_rating: 5,
+    trailer_url: ''
   });
   
   const moviesRef = useRef<HTMLDivElement>(null);
@@ -67,7 +67,7 @@ function App() {
     if (!matchesSearch) return false;
     
     if (filter === 'top-rated') {
-      const avgRating = (movie.michelRating + movie.brayhantRating) / 2;
+      const avgRating = (movie.michel_rating + movie.brayhant_rating) / 2;
       return avgRating >= 8;
     } else if (filter === 'recent') {
       return movies.indexOf(movie) >= Math.max(0, movies.length - 10);
@@ -75,37 +75,6 @@ function App() {
     
     return true;
   });
-
-  const handleAddMovie = async () => {
-    if (!newMovie.title || !newMovie.synopsis || !newMovie.poster) {
-      alert('Por favor, completa todos los campos obligatorios');
-      return;
-    }
-
-    const movieToAdd: Movie = {
-      title: newMovie.title!,
-      synopsis: newMovie.synopsis!,
-      poster: newMovie.poster!,
-      michelRating: newMovie.michelRating || 5,
-      brayhantRating: newMovie.brayhantRating || 5,
-      trailerUrl: newMovie.trailerUrl,
-      youtubeId: newMovie.trailerUrl ? getYoutubeId(newMovie.trailerUrl) : undefined
-    };
-
-    const addedMovie = await addMovie(movieToAdd);
-    if (addedMovie) {
-      setMovies(prevMovies => [addedMovie, ...prevMovies]);
-      setShowAddModal(false);
-      setNewMovie({
-        title: '',
-        synopsis: '',
-        poster: '',
-        michelRating: 5,
-        brayhantRating: 5,
-        trailerUrl: ''
-      });
-    }
-  };
 
   const getYoutubeId = (url: string): string => {
     try {
@@ -118,6 +87,37 @@ function App() {
       return '';
     } catch (error) {
       return '';
+    }
+  };
+
+  const handleAddMovie = async () => {
+    if (!newMovie.title || !newMovie.synopsis || !newMovie.poster) {
+      alert('Por favor, completa todos los campos obligatorios');
+      return;
+    }
+
+    const movieToAdd: Movie = {
+      title: newMovie.title!,
+      synopsis: newMovie.synopsis!,
+      poster: newMovie.poster!,
+      michel_rating: newMovie.michel_rating || 5,
+      brayhant_rating: newMovie.brayhant_rating || 5,
+      trailer_url: newMovie.trailer_url,
+      youtube_id: newMovie.trailer_url ? getYoutubeId(newMovie.trailer_url) : undefined
+    };
+
+    const addedMovie = await addMovie(movieToAdd);
+    if (addedMovie) {
+      setMovies(prevMovies => [addedMovie, ...prevMovies]);
+      setShowAddModal(false);
+      setNewMovie({
+        title: '',
+        synopsis: '',
+        poster: '',
+        michel_rating: 5,
+        brayhant_rating: 5,
+        trailer_url: ''
+      });
     }
   };
 
@@ -181,7 +181,7 @@ function App() {
           ) : (
             filteredMovies.map((movie, index) => (
               <MovieCard 
-                key={index}
+                key={movie.id || index}
                 movie={movie}
                 onClick={() => setSelectedMovie(movie)}
                 index={index}
@@ -265,8 +265,8 @@ function App() {
                     min="0"
                     max="10"
                     step="0.5"
-                    value={newMovie.michelRating}
-                    onChange={e => setNewMovie({...newMovie, michelRating: parseFloat(e.target.value)})}
+                    value={newMovie.michel_rating}
+                    onChange={e => setNewMovie({...newMovie, michel_rating: parseFloat(e.target.value)})}
                     className="w-full px-4 py-2 bg-white/10 border border-white/20 rounded-lg focus:outline-none focus:border-[#8a2be2] transition-colors"
                   />
                 </div>
@@ -280,8 +280,8 @@ function App() {
                     min="0"
                     max="10"
                     step="0.5"
-                    value={newMovie.brayhantRating}
-                    onChange={e => setNewMovie({...newMovie, brayhantRating: parseFloat(e.target.value)})}
+                    value={newMovie.brayhant_rating}
+                    onChange={e => setNewMovie({...newMovie, brayhant_rating: parseFloat(e.target.value)})}
                     className="w-full px-4 py-2 bg-white/10 border border-white/20 rounded-lg focus:outline-none focus:border-[#8a2be2] transition-colors"
                   />
                 </div>
@@ -293,8 +293,8 @@ function App() {
                 </label>
                 <input
                   type="url"
-                  value={newMovie.trailerUrl}
-                  onChange={e => setNewMovie({...newMovie, trailerUrl: e.target.value})}
+                  value={newMovie.trailer_url}
+                  onChange={e => setNewMovie({...newMovie, trailer_url: e.target.value})}
                   className="w-full px-4 py-2 bg-white/10 border border-white/20 rounded-lg focus:outline-none focus:border-[#8a2be2] transition-colors"
                   placeholder="https://www.youtube.com/watch?v=..."
                 />

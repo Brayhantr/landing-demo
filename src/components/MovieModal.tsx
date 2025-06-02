@@ -10,21 +10,10 @@ interface MovieModalProps {
 
 const MovieModal: React.FC<MovieModalProps> = ({ movie, onClose }) => {
   const [showTrailer, setShowTrailer] = useState(false);
-  const [youtubeId, setYoutubeId] = useState('');
 
   useEffect(() => {
     // Reset trailer state when movie changes
     setShowTrailer(false);
-
-    // Extract YouTube ID from URL if available
-    if (movie.trailerUrl) {
-      const url = new URL(movie.trailerUrl);
-      if (url.hostname === 'www.youtube.com' && url.searchParams.has('v')) {
-        setYoutubeId(url.searchParams.get('v') || '');
-      } else if (url.hostname === 'youtu.be') {
-        setYoutubeId(url.pathname.substring(1));
-      }
-    }
 
     // Disable scrolling while modal is open
     document.body.style.overflow = 'hidden';
@@ -82,8 +71,8 @@ const MovieModal: React.FC<MovieModalProps> = ({ movie, onClose }) => {
           <X size={24} />
         </button>
         
-        {showTrailer && youtubeId ? (
-          <YouTubeEmbed youtubeId={youtubeId} />
+        {showTrailer && movie.youtube_id ? (
+          <YouTubeEmbed youtubeId={movie.youtube_id} />
         ) : (
           <div className="flex flex-col md:flex-row gap-8">
             <div className="md:w-1/3">
@@ -93,7 +82,7 @@ const MovieModal: React.FC<MovieModalProps> = ({ movie, onClose }) => {
                   alt={movie.title} 
                   className="w-full rounded-lg shadow-[0_5px_15px_rgba(0,0,0,0.3)]"
                 />
-                {youtubeId && (
+                {movie.youtube_id && (
                   <div 
                     className="absolute inset-0 flex items-center justify-center bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer rounded-lg"
                     onClick={() => setShowTrailer(true)}
@@ -112,13 +101,13 @@ const MovieModal: React.FC<MovieModalProps> = ({ movie, onClose }) => {
               <div className="flex gap-8 mb-6">
                 <div>
                   <div className="text-white/80 mb-1">Michel</div>
-                  <div className="flex items-center gap-1">{getStars(movie.michelRating)}</div>
-                  <div className="text-sm text-white/60">{movie.michelRating}/10</div>
+                  <div className="flex items-center gap-1">{getStars(movie.michel_rating)}</div>
+                  <div className="text-sm text-white/60">{movie.michel_rating}/10</div>
                 </div>
                 <div>
                   <div className="text-white/80 mb-1">Brayhant</div>
-                  <div className="flex items-center gap-1">{getStars(movie.brayhantRating)}</div>
-                  <div className="text-sm text-white/60">{movie.brayhantRating}/10</div>
+                  <div className="flex items-center gap-1">{getStars(movie.brayhant_rating)}</div>
+                  <div className="text-sm text-white/60">{movie.brayhant_rating}/10</div>
                 </div>
               </div>
               
@@ -126,7 +115,7 @@ const MovieModal: React.FC<MovieModalProps> = ({ movie, onClose }) => {
                 {movie.synopsis}
               </p>
               
-              {youtubeId && (
+              {movie.youtube_id && (
                 <button 
                   className="neon-btn bg-[#8a2be2] text-white py-2 px-6 rounded-lg flex items-center gap-2 hover:bg-[#7825c9] transition-all shadow-[0_0_15px_rgba(138,43,226,0.4)]"
                   onClick={() => setShowTrailer(true)}
