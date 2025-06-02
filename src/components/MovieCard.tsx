@@ -26,7 +26,7 @@ const MovieCard: React.FC<MovieCardProps> = ({ movie, onClick, index }) => {
     
     // Half star
     if (hasHalfStar) {
-      stars.push(<Star key="half" className="fill-[#ffd700] text-[#ffd700] opacity-50" size={14} />);
+      stars.push(<Star key="half\" className="fill-[#ffd700] text-[#ffd700] opacity-50\" size={14} />);
     }
     
     // Empty stars
